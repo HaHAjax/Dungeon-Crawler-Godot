@@ -1,0 +1,72 @@
+[gd_scene load_steps=12 format=3 uid="uid://b0aoth4pnbxj1"]
+
+[ext_resource type="Script" uid="uid://cxybqjiioddgq" path="res://Scenes/Test/PlayerController.cs" id="1_mftnj"]
+[ext_resource type="Texture2D" uid="uid://jrbmxhxlk847" path="res://Assets/Textures/Prototyping/orange/texture_10.png" id="1_yb24k"]
+[ext_resource type="Texture2D" uid="uid://blf8x1nmw4hx2" path="res://Assets/Textures/Prototyping/dark/texture_02.png" id="2_sm0ls"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e1hcb"]
+sky_top_color = Color(0.454491, 0.745739, 0.991756, 1)
+sky_horizon_color = Color(0.549697, 0.825446, 0.972541, 1)
+sky_curve = 0.0326456
+ground_bottom_color = Color(0.0821448, 0.173093, 0.311094, 1)
+ground_horizon_color = Color(0.546311, 0.80851, 0.969513, 1)
+ground_curve = 0.0348221
+
+[sub_resource type="Sky" id="Sky_p011p"]
+sky_material = SubResource("ProceduralSkyMaterial_e1hcb")
+process_mode = 3
+
+[sub_resource type="Environment" id="Environment_o7elw"]
+background_mode = 2
+sky = SubResource("Sky_p011p")
+ambient_light_source = 3
+reflected_light_source = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yo4tw"]
+albedo_texture = ExtResource("1_yb24k")
+uv1_scale = Vector3(2, 2, 2)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_h76c2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7pdn6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jnx80"]
+albedo_texture = ExtResource("2_sm0ls")
+uv1_scale = Vector3(50, 50, 50)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jfdwu"]
+size = Vector2(100, 100)
+subdivide_width = 100
+subdivide_depth = 100
+
+[node name="Player-Camera" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_o7elw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.133952, -0.947605, 0.290001, 0, 0.292639, 0.956223, -0.990988, -0.128088, 0.0391994, 0, 1, 0)
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_mftnj")
+playerSpeed = 5.0
+
+[node name="PlayerMesh" type="MeshInstance3D" parent="Player"]
+material_override = SubResource("StandardMaterial3D_yo4tw")
+mesh = SubResource("CapsuleMesh_h76c2")
+
+[node name="PlayerCollision" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_7pdn6")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_jnx80")
+mesh = SubResource("PlaneMesh_jfdwu")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 1, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+projection = 1
+size = 12.5
