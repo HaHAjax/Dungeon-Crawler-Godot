@@ -3,28 +3,75 @@ using System;
 
 public partial class PlayerController : CharacterBody3D
 {
-    [Export(PropertyHint.Range, "0,50,0.25")] private float playerSpeed;
+    // The stats for the player
+    [Export(PropertyHint.Range, "0,50,0.25")] private float playerSpeed, rotationSpeed;
+
+    // Variables used for shtuff
+    private bool isRolling, canRoll, isActivelyMoving;
+    private Vector3 moveDirection, lookDirection;
 
     // The input variables
-    private Vector2 inputDirection;
+    private Vector2 inputMoveDirection, inputRollDirection;
+    private bool inputDoRoll;
 
     public override void _Process(double delta)
     {
         UpdateInputs();
+    }
 
-        MovePlayer();
+    public override void _PhysicsProcess(double delta)
+    {
+        // Getting the movement direction of the player, then shifting it by 45 degrees so it's accurate to the camera
+        moveDirection = Quaternion.FromEuler(new Vector3(0, Mathf.DegToRad(45), 0)) * new Vector3(inputMoveDirection.X, 0, inputMoveDirection.Y);
+        // Putting whether or not the player is moving into a bool
+        isActivelyMoving = moveDirection != Vector3.Zero;
+
+        if (isActivelyMoving)
+        {
+            lookDirection = moveDirection;
+            float lookAmount = Mathf.RadToDeg(Mathf.Atan2(lookDirection.X, lookDirection.Z));
+            RotatePlayer(lookAmount, (float)delta);
+        }
+
+
+        MovePlayer((float)delta);
+        RollPlayer(delta, inputDoRoll);
     }
 
     private void UpdateInputs()
     {
-        inputDirection = Input.GetVector("MoveLeft", "MoveRight", "MoveUp", "MoveDown").Normalized();
+        // The input direction vectors
+        inputMoveDirection = Input.GetVector("MoveLeft", "MoveRight", "MoveUp", "MoveDown").Normalized();
+        inputRollDirection = Input.GetVector("RollLeft", "RollRight", "RollUp", "RollDown").Normalized();
+
+        // The input booleans
+        inputDoRoll = Input.IsActionJustPressed("RollInput");
     }
 
-    private void MovePlayer()
+    private void RotatePlayer(float amount, float delta)
     {
-        var moveDirection = new Vector3(inputDirection.X, 0, inputDirection.Y);
-        moveDirection = Quaternion.FromEuler(new Vector3(0, Mathf.DegToRad(45), 0)) * moveDirection;
-        Velocity = moveDirection * playerSpeed;
-        MoveAndSlide();
+        // Get the current rotation on the Y axis
+        float currentRotation = RotationDegrees.Y;
+
+        // Calculate the difference between the current and target rotation
+        float deltaRotation = Mathf.Wrap(amount - currentRotation, -180f, 180f);
+
+        // Smoothly interpolate the rotation
+        RotationDegrees = new Vector3(0, currentRotation + deltaRotation * rotationSpeed * delta, 0);
+    }
+
+
+    private void RollPlayer(double delta, bool activateRoll)
+    {
+        if (!activateRoll) return;
+
+        // Put the code here later
+    }
+
+    private void MovePlayer(float delta)
+    {
+        // Setting the velocity's direction to the player's movement direction, making it accurate to the movespeed, and making it frame independent
+        Velocity = moveDirection * playerSpeed * (delta * 100);
+        MoveAndSlide(); // Always needed for movement :>
     }
 }
