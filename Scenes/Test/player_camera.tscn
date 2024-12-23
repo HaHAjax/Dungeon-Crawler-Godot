@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b0aoth4pnbxj1"]
+[gd_scene load_steps=19 format=3 uid="uid://b0aoth4pnbxj1"]
 
 [ext_resource type="Script" uid="uid://cxybqjiioddgq" path="res://Scenes/Test/PlayerController.cs" id="1_mftnj"]
 [ext_resource type="Texture2D" uid="uid://jrbmxhxlk847" path="res://Assets/Textures/Prototyping/orange/texture_10.png" id="1_yb24k"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dh51i8lhhdspx" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_qflrt"]
 [ext_resource type="Script" uid="uid://dih7dxw7spvvl" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="7_nuygn"]
 [ext_resource type="Script" uid="uid://c3i04x5dnnlpu" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_oaf1s"]
+[ext_resource type="Script" uid="uid://udukjw3848ao" path="res://Scenes/Test/PlayerCameraDebugUI.cs" id="8_nuygn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e1hcb"]
 sky_top_color = Color(0.454491, 0.745739, 0.991756, 1)
@@ -71,10 +72,14 @@ environment = SubResource("Environment_o7elw")
 transform = Transform3D(0.133952, -0.947605, 0.290001, 0, 0.292639, 0.956223, -0.990988, -0.128088, 0.0391994, 0, 1, 0)
 
 [node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 script = ExtResource("1_mftnj")
 playerSpeed = 5.0
 rotationSpeed = 25.0
+rollSpeed = 35.0
+rollDuration = 1.0
+rollCooldown = 0.5
 
 [node name="PlayerMesh" type="MeshInstance3D" parent="Player"]
 material_override = SubResource("StandardMaterial3D_yo4tw")
@@ -89,7 +94,7 @@ mesh = SubResource("PlaneMesh_jfdwu")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 physics_interpolation_mode = 1
-transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, 6, 6, 6)
+transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.499999, -0.707107, -0.353553, 0.612373, 6, 6.1, 6)
 top_level = true
 projection = 1
 size = 12.5
@@ -100,7 +105,7 @@ process_physics_priority = 300
 script = ExtResource("7_oaf1s")
 
 [node name="PhantomCamera3D" type="Camera3D" parent="." node_paths=PackedStringArray("follow_target")]
-transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, 6, 6, 6)
+transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.499999, -0.707107, -0.353553, 0.612373, 6, 6.1, 6)
 top_level = true
 projection = 1
 size = 12.5
@@ -113,3 +118,165 @@ follow_offset = Vector3(6, 5, 6)
 follow_damping = true
 dead_zone_width = 1.0
 dead_zone_height = 1.0
+
+[node name="DebugUI" type="CanvasLayer" parent="."]
+script = ExtResource("8_nuygn")
+
+[node name="DebugVariablesLeft" type="VBoxContainer" parent="DebugUI"]
+offset_right = 251.0
+offset_bottom = 648.0
+size_flags_horizontal = 0
+
+[node name="DebugTemplate" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="TemplateVariable" type="Label" parent="DebugUI/DebugVariablesLeft/DebugTemplate"]
+layout_mode = 2
+text = "debug variable: "
+
+[node name="TemplateValue" type="Label" parent="DebugUI/DebugVariablesLeft/DebugTemplate"]
+layout_mode = 2
+text = "debug value"
+
+[node name="Separator2" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="IsPlayerRolling" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/IsPlayerRolling"]
+layout_mode = 2
+text = "IsPlayerRolling: "
+
+[node name="IsRollDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/IsPlayerRolling"]
+layout_mode = 2
+text = "bool value"
+
+[node name="CanPlayerRoll" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/CanPlayerRoll"]
+layout_mode = 2
+text = "CanPlayerRoll: "
+
+[node name="CanRollDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/CanPlayerRoll"]
+layout_mode = 2
+text = "bool value"
+
+[node name="IsActivelyMoving" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/IsActivelyMoving"]
+layout_mode = 2
+text = "IsActivelyMoving: "
+
+[node name="IsMoveDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/IsActivelyMoving"]
+layout_mode = 2
+text = "bool value"
+
+[node name="Separator" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="MoveDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/MoveDirection"]
+layout_mode = 2
+text = "MoveDirection: "
+
+[node name="MoveDirDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/MoveDirection"]
+layout_mode = 2
+text = "vector3 value"
+
+[node name="LookDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/LookDirection"]
+layout_mode = 2
+text = "LookDirection: "
+
+[node name="LookDirDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/LookDirection"]
+layout_mode = 2
+text = "vector3 value"
+
+[node name="RollDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/RollDirection"]
+layout_mode = 2
+text = "RollDirection: "
+
+[node name="RollDirDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/RollDirection"]
+layout_mode = 2
+text = "vector3 value"
+
+[node name="DebugVariablesRight" type="VBoxContainer" parent="DebugUI"]
+offset_left = 850.0
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 8
+
+[node name="DebugTemplate" type="HBoxContainer" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+alignment = 2
+
+[node name="TemplateVariable" type="Label" parent="DebugUI/DebugVariablesRight/DebugTemplate"]
+layout_mode = 2
+text = "debug variable: "
+
+[node name="TemplateValue" type="Label" parent="DebugUI/DebugVariablesRight/DebugTemplate"]
+layout_mode = 2
+text = "debug value"
+
+[node name="Separator2" type="HSeparator" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="InputDoRoll" type="HBoxContainer" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesRight/InputDoRoll"]
+layout_mode = 2
+text = "InputDoRoll: "
+
+[node name="IDoRollDebugValue" type="Label" parent="DebugUI/DebugVariablesRight/InputDoRoll"]
+layout_mode = 2
+text = "bool value"
+
+[node name="Separator" type="HSeparator" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="InputMoveDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesRight/InputMoveDirection"]
+layout_mode = 2
+text = "InputMoveDirection: "
+
+[node name="IMoveDirDebugValue" type="Label" parent="DebugUI/DebugVariablesRight/InputMoveDirection"]
+layout_mode = 2
+text = "vector2 value"
+
+[node name="InputRollDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesRight"]
+layout_mode = 2
+alignment = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesRight/InputRollDirection"]
+layout_mode = 2
+text = "InputRollDirection: "
+
+[node name="IRollDirDebugValue" type="Label" parent="DebugUI/DebugVariablesRight/InputRollDirection"]
+layout_mode = 2
+text = "vector2 value"

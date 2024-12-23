@@ -4,15 +4,62 @@ using System;
 public partial class PlayerController : CharacterBody3D
 {
     // The stats for the player
-    [Export(PropertyHint.Range, "0,50,0.25")] private float playerSpeed, rotationSpeed;
+    [Export(PropertyHint.Range, "0,25,0.25")] private float playerSpeed, rotationSpeed;
+    [Export(PropertyHint.Range, "0,50,0.25")] private float rollSpeed, rollDuration, rollCooldown;
 
     // Variables used for shtuff
     private bool isRolling, canRoll, isActivelyMoving;
-    private Vector3 moveDirection, lookDirection;
+    public bool GetIsRolling
+    {
+        get { return isRolling; }
+        private set { isRolling = value; }
+    }
+    public bool GetCanRoll
+    {
+        get { return canRoll; }
+        private set { canRoll = value; }
+    }
+    public bool GetIsActivelyMoving
+    {
+        get { return isActivelyMoving; }
+        private set { isActivelyMoving = value; }
+    }
+
+    private Vector3 moveDirection, lookDirection, rollDirection;
+    public Vector3 GetMoveDirection
+    {
+        get { return moveDirection; }
+        private set { moveDirection = value; }
+    }
+    public Vector3 GetLookDirection
+    {
+        get { return lookDirection; }
+        private set { lookDirection = value; }
+    }
+    public Vector3 GetRollDirection
+    {
+        get { return rollDirection; }
+        private set { rollDirection = value; }
+    }
 
     // The input variables
     private Vector2 inputMoveDirection, inputRollDirection;
+    public Vector2 GetInputMoveDirection
+    {
+        get { return inputMoveDirection; }
+        private set { inputMoveDirection = value; }
+    }
+    public Vector2 GetInputRollDirection
+    {
+        get { return inputRollDirection; }
+        private set { inputRollDirection = value; }
+    }
     private bool inputDoRoll;
+    public bool GetInputDoRoll
+    {
+        get { return inputDoRoll; }
+        private set { inputDoRoll = value; }
+    }
 
     public override void _Process(double delta)
     {
@@ -33,9 +80,9 @@ public partial class PlayerController : CharacterBody3D
             RotatePlayer(lookAmount, (float)delta);
         }
 
-
         MovePlayer((float)delta);
-        RollPlayer(delta, inputDoRoll);
+        if (inputDoRoll && canRoll)
+            RollPlayer(delta);
     }
 
     private void UpdateInputs()
@@ -61,11 +108,13 @@ public partial class PlayerController : CharacterBody3D
     }
 
 
-    private void RollPlayer(double delta, bool activateRoll)
+    private void RollPlayer(double delta)
     {
-        if (!activateRoll) return;
+        canRoll = false;
+        isRolling = true;
 
-        // Put the code here later
+        // Setting the velocity's direction to the player's movement direction, making it accurate to the movespeed, and making it frame independent
+        Velocity = moveDirection * rollSpeed * ((float)delta * 100);
     }
 
     private void MovePlayer(float delta)
