@@ -75,13 +75,14 @@ public partial class PlayerController : CharacterBody3D
     {
         UpdateInputs();
 
-        moveDirection = Quaternion.FromEuler(new Vector3(0, Mathf.DegToRad(45), 0)) * new Vector3(inputMoveDirection.X, 0, inputMoveDirection.Y);
+        // Movement direction based on input
+        moveDirection = (Quaternion.FromEuler(new Vector3(0, 45f, 0)) * new Vector3(inputMoveDirection.X, 0, inputMoveDirection.Y)).Normalized();
         isActivelyMoving = moveDirection != Vector3.Zero;
 
         // Only update roll direction if not rolling yet
         if (!isRolling)
         {
-            rollDirection = Quaternion.FromEuler(new Vector3(0, Mathf.DegToRad(45), 0)) * new Vector3(inputRollDirection.X, 0, inputRollDirection.Y);
+            rollDirection = (Quaternion.FromEuler(new Vector3(0, 45f, 0)) * new Vector3(inputRollDirection.X, 0, inputRollDirection.Y)).Normalized();
             inputDoRollDirection = inputRollDirection != Vector2.Zero;
         }
 
@@ -96,11 +97,17 @@ public partial class PlayerController : CharacterBody3D
             RollPlayer(false); // Roll in the custom direction the player is inputting
         }
 
+        if ((inputDoRollButton && canRoll && !isRolling) || (inputDoRollDirection && canRoll && !isRolling))
+        {
+            PlayRollAnimation(); // Play the roll animation
+        }
+
         // Apply regular movement only if not rolling
         if (!isRolling && isActivelyMoving)
         {
             lookDirection = moveDirection;
             float lookAmount = Mathf.RadToDeg(Mathf.Atan2(lookDirection.X, lookDirection.Z));
+
             RotatePlayer(lookAmount, (float)delta);
             MovePlayer((float)delta);
         }
@@ -110,6 +117,10 @@ public partial class PlayerController : CharacterBody3D
             // Keep moving in the roll direction during the entire roll duration
             Velocity = rollDirection * rollSpeed; // Set velocity to the roll direction
             MoveAndSlide(); // Perform physics movement
+        }
+        else if (!isRolling || (!isRolling && isActivelyMoving))
+        {
+            StopRollAnimation(); // Stop the roll animation
         }
     }
 
@@ -122,16 +133,17 @@ public partial class PlayerController : CharacterBody3D
 
     private void RotatePlayer(float amount, float delta)
     {
-        float currentRotation = RotationDegrees.Y;
-        float deltaRotation = Mathf.Wrap(amount - currentRotation, -180f, 180f);
-        RotationDegrees = new Vector3(0, currentRotation + deltaRotation * rotationSpeed * delta, 0);
+        // This keeps the player's facing direction in sync with the movement input.
+        if (!isRolling)
+        {
+            // Adjust for the isometric camera rotation by adding 45 degrees
+            Rotation = new Vector3(0, Mathf.LerpAngle(Rotation.Y, Mathf.DegToRad(amount), rotationSpeed * delta), 0);
+        }
     }
 
     private void RollPlayer(bool isFromButton)
     {
         if (!canRoll) return; // Prevent rolling if cooldown hasn't finished yet
-
-        PlayRollAnimation(); // Play the roll animation
 
         isRolling = true; // Start the roll
         rollTimer = 0f; // Reset roll timer
@@ -144,7 +156,7 @@ public partial class PlayerController : CharacterBody3D
         }
         else
         {
-            rollDirection = Quaternion.FromEuler(new Vector3(0, Mathf.DegToRad(45), 0)) * new Vector3(inputRollDirection.X, 0, inputRollDirection.Y).Normalized(); // Roll in the direction input by the player
+            rollDirection = (Quaternion.FromEuler(new Vector3(0, 45f, 0)) * new Vector3(inputRollDirection.X, 0, inputRollDirection.Y)).Normalized(); // Roll in the direction input by the player
         }
 
         canRoll = false; // Start cooldown immediately after rolling
@@ -158,6 +170,21 @@ public partial class PlayerController : CharacterBody3D
 
     private void PlayRollAnimation()
     {
+        // Ensure the AnimationPlayer and the roll animation are valid
+        if (rollAnimationPlayer == null || !rollAnimationPlayer.HasAnimation("RollAnimation"))
+        {
+            GD.PrintErr("AnimationPlayer or 'RollAnimation' is not set.");
+            return;
+        }
+
         rollAnimationPlayer.Play("RollAnimation");
+    }
+
+    private void StopRollAnimation()
+    {
+        if (rollAnimationPlayer.IsPlaying() && !isRolling)
+        {
+            rollAnimationPlayer.Stop();
+        }
     }
 }
