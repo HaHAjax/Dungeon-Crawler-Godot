@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Dungeon Crawler": {
+      "commandName": "Project",
+      "commandLineArgs": "-e --path \"C:\\Users\\unore\\OneDrive\\Documents\\Dungeon_Crawler_Godot\""
+    }
+  }
+}
