@@ -1,13 +1,13 @@
 [gd_scene load_steps=27 format=3 uid="uid://b0aoth4pnbxj1"]
 
-[ext_resource type="Script" uid="uid://cxybqjiioddgq" path="res://Scenes/Test/PlayerController.cs" id="1_mftnj"]
+[ext_resource type="Script" uid="uid://bel4r4ll8qake" path="res://Scenes/Test/PlayerController.gd" id="1_2arqp"]
 [ext_resource type="Texture2D" uid="uid://jrbmxhxlk847" path="res://Assets/Textures/Prototyping/orange/texture_10.png" id="1_yb24k"]
 [ext_resource type="Texture2D" uid="uid://bj56vaaxc2p54" path="res://Assets/Textures/Prototyping/dark/texture_04.png" id="3_nuygn"]
 [ext_resource type="Script" uid="uid://dl0wg1r77tmyc" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="4_qflrt"]
 [ext_resource type="Script" uid="uid://dh51i8lhhdspx" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_qflrt"]
 [ext_resource type="Script" uid="uid://dih7dxw7spvvl" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="7_nuygn"]
 [ext_resource type="Script" uid="uid://c3i04x5dnnlpu" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_oaf1s"]
-[ext_resource type="Script" uid="uid://udukjw3848ao" path="res://Scenes/Test/PlayerCameraDebugUI.cs" id="8_nuygn"]
+[ext_resource type="Script" uid="uid://bqa3b1lvw6pm0" path="res://Scenes/Test/DebugUI_Camera-Player.gd" id="8_nuygn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e1hcb"]
 sky_top_color = Color(0.454491, 0.745739, 0.991756, 1)
@@ -35,6 +35,21 @@ uv1_scale = Vector3(2, 2, 2)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7pdn6"]
 
+[sub_resource type="Animation" id="Animation_07knb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_nuygn"]
 resource_name = "RollAnimation"
 length = 0.4
@@ -50,21 +65,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(6.28319, 0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_07knb"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_isych"]
@@ -121,10 +121,10 @@ transform = Transform3D(0.133952, -0.947605, 0.290001, 0, 0.292639, 0.956223, -0
 
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-script = ExtResource("1_mftnj")
-playerSpeed = 5.0
-rotationSpeed = 25.0
-rollSpeed = 15.0
+script = ExtResource("1_2arqp")
+moveSpeed = 5.0
+rotateSpeed = 25.0
+rollSpeed = 50.0
 rollDuration = 0.4
 rollCooldown = 1.0
 
@@ -197,28 +197,28 @@ text = "debug value"
 
 [node name="Separator2" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
 layout_mode = 2
-theme_override_constants/separation = 25
+theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxFlat_nuygn")
+
+[node name="currentState" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/currentState"]
+layout_mode = 2
+text = "currentState"
+
+[node name="CurrStateDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/currentState"]
+layout_mode = 2
+text = "bool value"
 
 [node name="IsPlayerRolling" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
 layout_mode = 2
 
 [node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/IsPlayerRolling"]
 layout_mode = 2
-text = "IsPlayerRolling: "
+text = "isActivelyRolling: "
 
-[node name="IsRollDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/IsPlayerRolling"]
-layout_mode = 2
-text = "bool value"
-
-[node name="CanPlayerRoll" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
-layout_mode = 2
-
-[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/CanPlayerRoll"]
-layout_mode = 2
-text = "CanPlayerRoll: "
-
-[node name="CanRollDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/CanPlayerRoll"]
+[node name="CanRollDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/IsPlayerRolling"]
 layout_mode = 2
 text = "bool value"
 
@@ -235,7 +235,7 @@ text = "bool value"
 
 [node name="Separator" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxFlat_07knb")
 
 [node name="MoveDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
@@ -273,7 +273,7 @@ text = "vector3 value"
 
 [node name="Separator3" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxFlat_isych")
 
 [node name="InputDoRoll" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
@@ -289,7 +289,7 @@ text = "bool value"
 
 [node name="Separator4" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxFlat_83xd7")
 
 [node name="InputMoveDirection" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
@@ -313,3 +313,30 @@ text = "InputRollDirection: "
 [node name="IRollDirDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/InputRollDirection"]
 layout_mode = 2
 text = "vector2 value"
+
+[node name="Separator5" type="HSeparator" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxFlat_83xd7")
+
+[node name="RollTimer" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/RollTimer"]
+layout_mode = 2
+text = "RollTimeLeft: "
+
+[node name="RollTimeDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/RollTimer"]
+layout_mode = 2
+text = "float value"
+
+[node name="RollCooldown" type="HBoxContainer" parent="DebugUI/DebugVariablesLeft"]
+layout_mode = 2
+
+[node name="DebugVariable" type="Label" parent="DebugUI/DebugVariablesLeft/RollCooldown"]
+layout_mode = 2
+text = "RollCooldown: "
+
+[node name="RollCoolDebugValue" type="Label" parent="DebugUI/DebugVariablesLeft/RollCooldown"]
+layout_mode = 2
+text = "float value"
