@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
+ControllerIcons="*res://addons/controller_icons/ControllerIcons.gd"
 
 [dotnet]
 
@@ -24,7 +25,7 @@ project/assembly_name="Dungeon Crawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/phantom_camera/plugin.cfg")
+enabled=PackedStringArray("res://addons/controller_icons/plugin.cfg", "res://addons/object_state_machine/plugin.cfg", "res://addons/phantom_camera/plugin.cfg")
 
 [input]
 
