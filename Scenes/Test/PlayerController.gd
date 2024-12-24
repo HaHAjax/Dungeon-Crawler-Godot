@@ -23,131 +23,110 @@ var moveDirection: Vector3 = Vector3.ZERO
 var lookDirection: Vector3 = Vector3.ZERO
 var rollDirection: Vector3 = Vector3.ZERO
 
-var prevMoveDirection: Vector3 = Vector3.ZERO
-var rollLookDirection: Vector3 = Vector3.ZERO
 var isActivelyRolling: bool = false
-
 var timerRoll: float = 0
-var timerRollCooldown: float = 0
+var timerRollCooldown: float = 0  # Start cooldown at 0 initially
 
 var inputMoveDirection: Vector2 = Vector2.ZERO
 var inputRollDirection: Vector2 = Vector2.ZERO
 var inputDoRollButton: bool = false
 
-func _ready():
-	pass
-
-func _process(delta):
-	pass
-
 func _physics_process(delta):
 	_update_states()
-	
-	if (curr_state != prev_state):
+
+	if curr_state != prev_state:
 		_exit_state(prev_state, delta)
 		_transition_states(prev_state, curr_state, delta)
 		_enter_state(curr_state, delta)
-	
+
 	_update_active_state(delta)
 	_update_inputs()
 	_update_variables()
-	
 	prev_state = curr_state
 
 func _update_active_state(delta):
 	match curr_state:
 		PlayerStates.Idle:
-			_handle_idle_state(delta)
+			if shouldRollCooldownCount():
+				_do_roll_cooldown(delta)
 		PlayerStates.Moving:
-			_move_player(delta)
+			_move_player()
+			if shouldRollCooldownCount():
+				_do_roll_cooldown(delta)
 		PlayerStates.Rolling:
-			_continue_roll_player(delta)
+			_continue_roll(delta)
 
 func _enter_state(state, delta):
-	match state:
-		PlayerStates.Rolling:
-			_init_roll_player(rollDirection, delta)
+	pass
 
 func _exit_state(state, delta):
 	match state:
 		PlayerStates.Rolling:
-			_reset_roll()
+			_start_roll_cooldown()  # Start cooldown when exiting the rolling state
 
 func _transition_states(from, to, delta):
-	match from:
+	match to:
 		PlayerStates.Rolling:
-			if to != PlayerStates.Rolling:
-				_reset_roll()
+			_init_roll()
 
 func _update_states():
-	if inputDoRollButton and timerRollCooldown == 0:
-		# If the roll button is pressed, roll in the look direction
-		rollDirection = lookDirection
+	if isActivelyRolling:
 		curr_state = PlayerStates.Rolling
-	elif inputRollDirection != Vector2.ZERO and !isActivelyRolling:  # Roll direction is now prioritized only when not already rolling
-		# If the right joystick is moved, roll in the joystick direction
-		rollDirection = (Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y)).normalized()
+	elif doesPlayerWantToRoll() and canPlayerActuallyRoll():
 		curr_state = PlayerStates.Rolling
-	elif isActivelyRolling:
-		curr_state = PlayerStates.Rolling
-	elif inputMoveDirection != Vector2.ZERO and !inputDoRollButton:
+	elif inputMoveDirection != Vector2.ZERO:
 		curr_state = PlayerStates.Moving
-	elif inputMoveDirection == Vector2.ZERO and !inputDoRollButton:
+	else:
 		curr_state = PlayerStates.Idle
 
+func doesPlayerWantToRoll():
+	return inputDoRollButton or inputRollDirection != Vector2.ZERO
+
+func canPlayerActuallyRoll():
+	return timerRollCooldown >= rollCooldown  # Ensure player can only roll after cooldown is over
+
+func shouldRollCooldownCount():
+	return timerRollCooldown < rollCooldown
+
 func _update_inputs():
-	inputMoveDirection = Input.get_vector("MoveLeft", "MoveRight", "MoveUp", "MoveDown")  # Move direction
-	inputRollDirection = Input.get_vector("RollLeft", "RollRight", "RollUp", "RollDown")  # Roll direction
-	inputDoRollButton = Input.is_action_just_pressed("RollInput")  # Roll button
+	inputMoveDirection = Input.get_vector("MoveLeft", "MoveRight", "MoveUp", "MoveDown")
+	inputRollDirection = Input.get_vector("RollLeft", "RollRight", "RollUp", "RollDown")
+	inputDoRollButton = Input.is_action_pressed("RollInput")
 
 func _update_variables():
-	moveDirection = Vector3(inputMoveDirection.x, 0, inputMoveDirection.y)
-	moveDirection = (Quaternion.from_euler(Vector3(0, 45, 0)) * moveDirection).normalized()
+	moveDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputMoveDirection.x, 0, inputMoveDirection.y).normalized()
+	if curr_state != PlayerStates.Rolling:
+		rollDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y).normalized()
 
-	# Update roll direction only when roll starts, lock it during the roll
-	if curr_state == PlayerStates.Rolling and !isActivelyRolling:
-		rollDirection = (Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y)).normalized()
+func _move_player():
+	if inputMoveDirection != Vector2.ZERO:
+		velocity = moveDirection * moveSpeed
+		move_and_slide()
 
-func _init_roll_player(direction: Vector3, delta: float):
+func _init_roll():
 	isActivelyRolling = true
-	timerRoll = 0
-	rollLookDirection = lookDirection  # Set roll direction to current look direction
-	_do_roll_timer(delta)
+	timerRoll = 0  # Reset roll time to 0 at the start of the roll
+	rollDirection = rollDirection if rollDirection != Vector3.ZERO else lookDirection.normalized()
+	rollDirection = rollDirection.normalized()
+	velocity = rollDirection * rollSpeed
 
-func _do_roll_timer(delta):
-	if (isActivelyRolling):
-		timerRoll += delta
-		if (timerRoll >= rollDuration):
-			timerRoll = 0
-			isActivelyRolling = false
-			timerRollCooldown = 0  # Reset cooldown after roll finishes
+func _continue_roll(delta):
+	# Update roll time and stop roll after duration
+	timerRoll += delta
+	if timerRoll < rollDuration:
+		move_and_slide()
+	else:
+		isActivelyRolling = false
+		curr_state = PlayerStates.Idle  # Transition to Idle when roll ends
+		_start_roll_cooldown()  # Properly call cooldown reset after roll ends
+
+func _start_roll_cooldown():
+	# Start the cooldown only when the roll is completed
+	timerRollCooldown = 0  # Reset cooldown timer when roll completes
 
 func _do_roll_cooldown(delta):
-	if (timerRollCooldown < rollCooldown):
+	# Increase cooldown timer when not rolling
+	if timerRollCooldown < rollCooldown:
 		timerRollCooldown += delta
-	else:
-		timerRollCooldown = rollCooldown  # Ensure it doesn't exceed cooldown
-
-func _continue_roll_player(delta):
-	if (!isActivelyRolling):
-		return
-	
-	_do_roll_timer(delta)
-	velocity = rollDirection * rollSpeed  # Roll in the roll direction, not look direction
-	move_and_slide()
-
-func _move_player(delta):
-	lookDirection = moveDirection
-	velocity = moveDirection * moveSpeed
-	move_and_slide()
-
-func _handle_idle_state(delta):
-	if (timerRollCooldown > 0):
-		_do_roll_cooldown(delta)
-
-# The reset function to properly exit the rolling state
-func _reset_roll():
-	isActivelyRolling = false
-	rollLookDirection = Vector3.ZERO
-	timerRoll = 0
-	timerRollCooldown = 0  # Optionally reset the cooldown here too
+		if timerRollCooldown >= rollCooldown:
+			timerRollCooldown = rollCooldown  # Ensure cooldown doesn't exceed max value
