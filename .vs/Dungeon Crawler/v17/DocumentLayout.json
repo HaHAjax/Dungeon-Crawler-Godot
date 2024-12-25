@@ -28,9 +28,10 @@
               "RelativeDocumentMoniker": "Scenes\\Test\\PlayerCameraDebugUI.cs",
               "ToolTip": "C:\\Users\\unore\\OneDrive\\Documents\\Dungeon_Crawler_Godot\\Scenes\\Test\\PlayerCameraDebugUI.cs",
               "RelativeToolTip": "Scenes\\Test\\PlayerCameraDebugUI.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAMAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBgAAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-22T21:07:04.303Z"
+              "WhenOpened": "2024-12-22T21:07:04.303Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -38,9 +39,9 @@
               "Title": "PlayerController.cs",
               "DocumentMoniker": "C:\\Users\\unore\\OneDrive\\Documents\\Dungeon_Crawler_Godot\\Scenes\\Test\\PlayerController.cs",
               "RelativeDocumentMoniker": "Scenes\\Test\\PlayerController.cs",
-              "ToolTip": "C:\\Users\\unore\\OneDrive\\Documents\\Dungeon_Crawler_Godot\\Scenes\\Test\\PlayerController.cs*",
-              "RelativeToolTip": "Scenes\\Test\\PlayerController.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAANAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\unore\\OneDrive\\Documents\\Dungeon_Crawler_Godot\\Scenes\\Test\\PlayerController.cs",
+              "RelativeToolTip": "Scenes\\Test\\PlayerController.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAADwvzQAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-22T00:49:05.309Z",
               "EditorCaption": ""
