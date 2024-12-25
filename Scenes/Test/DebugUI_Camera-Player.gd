@@ -5,6 +5,8 @@ var playerControllerScript: CharacterBody3D
 var labelPaths: Array[String] = [
 	"DebugVariablesLeft/currentState/CurrStateDebugValue",
 	"DebugVariablesLeft/IsPlayerRolling/CanRollDebugValue",
+	"DebugVariablesLeft/LookAmount/LookAmountDebugValue",
+	"DebugVariablesLeft/RollLookAmount/RollLookAmDebugValue",
 	"DebugVariablesLeft/MoveDirection/MoveDirDebugValue",
 	"DebugVariablesLeft/LookDirection/LookDirDebugValue",
 	"DebugVariablesLeft/RollDirection/RollDirDebugValue",
@@ -18,6 +20,8 @@ var labelPaths: Array[String] = [
 var variableNames: Array[String] = [
 	"curr_state",
 	"isActivelyRolling",
+	"lookAmount",
+	"rollLookAmount",
 	"moveDirection",
 	"lookDirection",
 	"rollDirection",
