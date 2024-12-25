@@ -74,11 +74,6 @@ transform = Transform3D(0.133952, -0.947605, 0.290001, 0, 0.292639, 0.956223, -0
 
 [node name="Player" parent="." instance=ExtResource("1_oaf1s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-moveSpeed = 0.0
-rotateSpeed = 0.0
-rollSpeed = 0.0
-rollDuration = 0.0
-rollCooldown = 0.0
 
 [node name="Floor" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_07knb")

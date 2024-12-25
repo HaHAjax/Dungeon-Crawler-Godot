@@ -15,12 +15,11 @@ var prev_state: PlayerStates = PlayerStates.Enter
 @onready var rollAnimation: Animation = rollAnimationPlayer.get_animation("RollAnimation")
 
 @export_group("Misc. stats")
-@export_range(0, 25, 0.1) var moveSpeed: float
-@export_range(0, 50, 0.25) var rotateSpeed: float
+@export_range(0, 25, 0.1) var moveSpeed: float = 5.0
 @export_group("Roll Stats")
-@export_range(0, 100, 0.5) var rollSpeed: float
-@export_range(0, 10, 0.1) var rollDuration: float
-@export_range(0, 10, 0.1) var rollCooldown: float
+@export_range(0, 100, 0.5) var rollSpeed: float = 20.0
+@export_range(0, 10, 0.1) var rollDuration: float = 0.3
+@export_range(0, 10, 0.1) var rollCooldown: float = 1.0
 
 var moveDirection: Vector3 = Vector3.ZERO
 var lookDirection: Vector3 = Vector3.ZERO
@@ -73,9 +72,18 @@ func _exit_state(state, delta):
 	match state:
 		PlayerStates.Rolling:
 			_start_roll_cooldown()  # Start cooldown when exiting the rolling state
+		#PlayerStates.Idle:
+			#rollLookAmount = lookAmount
+		#PlayerStates.Moving:
+			#rollLookAmount = atan2(rollDirection.x, rollDirection.y)
 
 func _transition_states(from, to, delta):
 	pass
+	#match to:
+		#PlayerStates.Rolling when inputRollDirection:
+			#rollLookAmount = atan2(rollDirection.x, rollDirection.z)
+		#PlayerStates.Rolling when !inputRollDirection:
+			#rollLookAmount = lookAmount
 
 func _update_states():
 	if isActivelyRolling:
@@ -144,7 +152,8 @@ func _continue_roll(delta):
 		_start_roll_cooldown()  # Properly call cooldown reset after roll ends
 
 func _start_roll_cooldown():
-	timerRollCooldown = 0  # Reset cooldown timer to 'start' it
+	# Start the cooldown only when the roll is completed
+	timerRollCooldown = 0  # Reset cooldown timer when roll completes
 
 func _do_roll_cooldown(delta):
 	# Increase cooldown timer when not rolling
