@@ -111,12 +111,35 @@ func _update_inputs():
 	inputMoveDirection = Input.get_vector("MoveLeft", "MoveRight", "MoveUp", "MoveDown")
 	inputRollDirection = Input.get_vector("RollLeft", "RollRight", "RollUp", "RollDown")
 	inputDoRollButton = Input.is_action_pressed("RollInput")
+	
+	if !inputMoveDirection.is_zero_approx():
+		movePos = Vector3.ZERO
+	elif Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+		var cam = get_viewport().get_camera_3d()
+		if not cam: return
+		var origin = cam.project_ray_origin(get_viewport().get_mouse_position())
+		var normal = cam.project_ray_normal(get_viewport().get_mouse_position())
+		
+		## replace this with a raycast once navmeshes are added
+		var pos = Plane.PLANE_XZ.intersects_ray(origin, normal)
+		
+		movePos = pos if pos else Vector3.ZERO
 
-func _update_variables():
-	moveDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputMoveDirection.x, 0, inputMoveDirection.y).normalized()
-	#if curr_state != PlayerStates.Rolling:
-	rollDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y).normalized()
-	rollDirection = moveDirection if !rollDirection else rollDirection
+
+func _update_variables(delta):
+	var camera = get_viewport().get_camera_3d()
+	if not camera:
+		return
+	moveDirection = Vector3(inputMoveDirection.x, 0, inputMoveDirection.y).rotated(Vector3.UP, camera.rotation.y).normalized()
+	if !moveDirection and movePos:
+		var offset = movePos - position
+		if Vector2(offset.x, offset.z).length_squared() < pow(moveSpeed*delta, 2):
+			movePos = Vector3.ZERO
+		else:
+			moveDirection = Plane.PLANE_XZ.project(movePos - position).normalized()
+	
+	rollDirection = Vector3(inputRollDirection.x, 0, inputRollDirection.y).rotated(Vector3.UP, camera.rotation.y).normalized()
+	rollDirection = moveDirection if rollDirection.is_zero_approx() else rollDirection
 
 func _move_player():
 	if moveDirection != Vector3.ZERO:
