@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b0aoth4pnbxj1"]
+[gd_scene load_steps=23 format=3 uid="uid://b0aoth4pnbxj1"]
 
 [ext_resource type="PackedScene" uid="uid://bsp411bsqew1p" path="res://Scenes/Test/player.tscn" id="1_oaf1s"]
 [ext_resource type="Texture2D" uid="uid://bj56vaaxc2p54" path="res://Assets/Textures/Prototyping/dark/texture_04.png" id="3_nuygn"]
@@ -25,6 +25,32 @@ background_mode = 2
 sky = SubResource("Sky_p011p")
 ambient_light_source = 3
 reflected_light_source = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oaf1s"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_nuygn"]
+material = SubResource("StandardMaterial3D_oaf1s")
+radius = 0.05
+height = 0.1
+
+[sub_resource type="GDScript" id="GDScript_07knb"]
+script/source = "extends MeshInstance3D
+
+@onready var player = $\"../Player\"
+
+
+
+func _physics_process(delta: float) -> void:
+	#if not player:
+		#player = get_node(\"../Player\")
+		#return
+	if player and player.movePos:
+		position = player.movePos
+		show()
+	else:
+		hide()
+"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_07knb"]
 albedo_texture = ExtResource("3_nuygn")
@@ -71,6 +97,13 @@ environment = SubResource("Environment_o7elw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.133952, -0.947605, 0.290001, 0, 0.292639, 0.956223, -0.990988, -0.128088, 0.0391994, 0, 1, 0)
+
+[node name="MovePos" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 2.10283)
+top_level = true
+mesh = SubResource("SphereMesh_nuygn")
+skeleton = NodePath("../Player")
+script = SubResource("GDScript_07knb")
 
 [node name="Player" parent="." instance=ExtResource("1_oaf1s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
