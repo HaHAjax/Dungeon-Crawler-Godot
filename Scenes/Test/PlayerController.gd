@@ -36,9 +36,11 @@ var inputMoveDirection: Vector2 = Vector2.ZERO
 var inputRollDirection: Vector2 = Vector2.ZERO
 var inputDoRollButton: bool = false
 
+var movePos: Vector3 = Vector3.ZERO
+	
 func _physics_process(delta):
 	_update_states()
-	_update_variables()
+	_update_variables(delta)
 	_update_inputs()
 	
 	if curr_state != prev_state:
@@ -91,7 +93,7 @@ func _update_states():
 		curr_state = PlayerStates.Rolling
 	elif doesPlayerWantToRoll() and canPlayerActuallyRoll():
 		curr_state = PlayerStates.Rolling
-	elif inputMoveDirection != Vector2.ZERO:
+	elif inputMoveDirection != Vector2.ZERO or movePos != Vector3.ZERO:
 		curr_state = PlayerStates.Moving
 	else:
 		curr_state = PlayerStates.Idle
@@ -111,13 +113,13 @@ func _update_inputs():
 	inputDoRollButton = Input.is_action_pressed("RollInput")
 
 func _update_variables():
-	# PI/4 is around 45 degrees in radians
 	moveDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputMoveDirection.x, 0, inputMoveDirection.y).normalized()
+	#if curr_state != PlayerStates.Rolling:
 	rollDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y).normalized()
 	rollDirection = moveDirection if !rollDirection else rollDirection
 
 func _move_player():
-	if inputMoveDirection != Vector2.ZERO:
+	if moveDirection != Vector3.ZERO:
 		velocity = moveDirection * moveSpeed
 		move_and_slide()
 
