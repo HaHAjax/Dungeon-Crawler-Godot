@@ -13,6 +13,7 @@ var prev_state: PlayerStates = PlayerStates.Enter
 
 @onready var rollAnimationPlayer: AnimationPlayer = $RollAnimation
 @onready var rollAnimation: Animation = rollAnimationPlayer.get_animation("RollAnimation")
+@onready var rollParticles: GPUParticles3D = $RollParticles
 
 @export_group("Misc. stats")
 @export_range(0, 25, 0.1) var moveSpeed: float = 5.0
@@ -110,8 +111,8 @@ func _update_inputs():
 	inputDoRollButton = Input.is_action_pressed("RollInput")
 
 func _update_variables():
+	# PI/4 is around 45 degrees in radians
 	moveDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputMoveDirection.x, 0, inputMoveDirection.y).normalized()
-	#if curr_state != PlayerStates.Rolling:
 	rollDirection = Quaternion.from_euler(Vector3(0, 45, 0)) * Vector3(inputRollDirection.x, 0, inputRollDirection.y).normalized()
 	rollDirection = moveDirection if !rollDirection else rollDirection
 
@@ -140,15 +141,20 @@ func _init_roll():
 	rollDirection = rollDirection if rollDirection != Vector3.ZERO else lookDirection.normalized()
 	rollDirection = rollDirection.normalized()
 	velocity = rollDirection * rollSpeed
+	
+	rollParticles.emitting = true
 
 func _continue_roll(delta):
 	# Update roll time and stop roll after duration
 	timerRoll += delta
 	if timerRoll < rollDuration:
+		rollParticles.global_position = Vector3(global_position.x, global_position.y - 0.6, global_position.z)
+		rollParticles.global_rotation = Vector3.ZERO
 		move_and_slide()
 	else:
 		isActivelyRolling = false
 		curr_state = PlayerStates.Idle  # Transition to Idle when roll ends
+		rollParticles.emitting = false
 		_start_roll_cooldown()  # Properly call cooldown reset after roll ends
 
 func _start_roll_cooldown():
