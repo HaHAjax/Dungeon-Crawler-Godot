@@ -37,7 +37,7 @@ var inputRollDirection: Vector2 = Vector2.ZERO
 var inputDoRollButton: bool = false
 
 var movePos: Vector3 = Vector3.ZERO
-	
+
 func _physics_process(delta):
 	_update_states()
 	_update_variables(delta)
@@ -114,7 +114,7 @@ func _update_inputs():
 	
 	if !inputMoveDirection.is_zero_approx():
 		movePos = Vector3.ZERO
-	elif Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+	elif Input.is_action_pressed("MoveClick"):
 		var cam = get_viewport().get_camera_3d()
 		if not cam: return
 		var origin = cam.project_ray_origin(get_viewport().get_mouse_position())
@@ -124,7 +124,6 @@ func _update_inputs():
 		var pos = Plane.PLANE_XZ.intersects_ray(origin, normal)
 		
 		movePos = pos if pos else Vector3.ZERO
-
 
 func _update_variables(delta):
 	var camera = get_viewport().get_camera_3d()
