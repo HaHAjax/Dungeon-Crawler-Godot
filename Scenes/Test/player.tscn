@@ -1,7 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://bsp411bsqew1p"]
+[gd_scene load_steps=10 format=3 uid="uid://bsp411bsqew1p"]
 
 [ext_resource type="Script" uid="uid://bel4r4ll8qake" path="res://Scenes/Test/PlayerController.gd" id="1_pftkc"]
 [ext_resource type="Texture2D" uid="uid://jrbmxhxlk847" path="res://Assets/Textures/Prototyping/orange/texture_10.png" id="2_jmnof"]
+[ext_resource type="PackedScene" uid="uid://dl7e0otcqw7un" path="res://Assets/Particles/roll_particles.tscn" id="3_jmnof"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yo4tw"]
 albedo_texture = ExtResource("2_jmnof")
@@ -49,54 +50,6 @@ _data = {
 &"RollAnimation": SubResource("Animation_nuygn")
 }
 
-[sub_resource type="Gradient" id="Gradient_pftkc"]
-offsets = PackedFloat32Array(0, 0.767568, 1)
-colors = PackedColorArray(0.259294, 0.259294, 0.259294, 1, 0.336607, 0.336608, 0.336608, 0.929412, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_jmnof"]
-gradient = SubResource("Gradient_pftkc")
-
-[sub_resource type="Curve" id="Curve_pftkc"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.505618), 0.069729, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_jmnof"]
-curve = SubResource("Curve_pftkc")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ljp87"]
-lifetime_randomness = 0.1
-emission_shape = 2
-emission_sphere_radius = 0.5
-initial_velocity_min = -2.5
-initial_velocity_max = 0.5
-radial_velocity_min = 0.00997765
-radial_velocity_max = 1.49998
-gravity = Vector3(0, 1, 0)
-radial_accel_min = 0.00999776
-radial_accel_max = 1.5
-damping_max = 0.9
-scale_max = 5.0
-scale_curve = SubResource("CurveTexture_jmnof")
-color_ramp = SubResource("GradientTexture1D_jmnof")
-turbulence_enabled = true
-turbulence_noise_scale = 4.57
-turbulence_noise_speed_random = 1.15
-turbulence_influence_max = 0.225
-turbulence_initial_displacement_min = 1.49012e-06
-turbulence_initial_displacement_max = 0.200001
-collision_mode = 1
-collision_friction = 0.0
-collision_bounce = 0.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a0cvb"]
-transparency = 1
-vertex_color_use_as_albedo = true
-billboard_mode = 1
-
-[sub_resource type="QuadMesh" id="QuadMesh_ljp87"]
-material = SubResource("StandardMaterial3D_a0cvb")
-size = Vector2(0.025, 0.025)
-
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_pftkc")
 
@@ -116,12 +69,5 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 target_position = Vector3(0, 0, 1)
 
-[node name="RollParticles" type="GPUParticles3D" parent="."]
+[node name="RollParticles" parent="." instance=ExtResource("3_jmnof")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
-emitting = false
-amount = 8192
-lifetime = 0.6
-preprocess = 1.25
-fixed_fps = 60
-process_material = SubResource("ParticleProcessMaterial_ljp87")
-draw_pass_1 = SubResource("QuadMesh_ljp87")
