@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://bg2y58lsr4cup"]
 
-[ext_resource type="PackedScene" uid="uid://5ekgns4rikhr" path="res://Assets/Models/Decor/CampFire.glb" id="1_u3a80"]
+[ext_resource type="PackedScene" uid="uid://5ekgns4rikhr" path="res://Assets/Models/Decor/Campfire/CampFire.glb" id="1_u3a80"]
 
 [sub_resource type="Gradient" id="Gradient_u3a80"]
 offsets = PackedFloat32Array(0, 0.432432, 1)
