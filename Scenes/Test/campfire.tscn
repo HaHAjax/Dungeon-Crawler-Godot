@@ -1,10 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bg2y58lsr4cup"]
+[gd_scene load_steps=12 format=3 uid="uid://bg2y58lsr4cup"]
 
 [ext_resource type="PackedScene" uid="uid://5ekgns4rikhr" path="res://Assets/Models/Decor/CampFire.glb" id="1_u3a80"]
 
 [sub_resource type="Gradient" id="Gradient_u3a80"]
-offsets = PackedFloat32Array(0, 0.454054, 0.751351, 1)
-colors = PackedColorArray(1, 0.815686, 0, 1, 1, 0.478431, 0, 1, 1, 0.14902, 0, 1, 1, 0.0352941, 0, 1)
+offsets = PackedFloat32Array(0, 0.432432, 1)
+colors = PackedColorArray(1, 0.658824, 0, 1, 1, 0.262745, 0, 1, 1, 0.0352941, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_d12lu"]
 gradient = SubResource("Gradient_u3a80")
@@ -18,13 +18,8 @@ point_count = 3
 curve = SubResource("Curve_u3a80")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u3a80"]
-emission_shape_offset = Vector3(0, 0.19, 0)
-emission_shape = 6
-emission_ring_axis = Vector3(0, 1, 0)
-emission_ring_height = 0.01
-emission_ring_radius = 0.13
-emission_ring_inner_radius = 0.0
-emission_ring_cone_angle = 90.0
+emission_shape = 1
+emission_sphere_radius = 0.2
 inherit_velocity_ratio = 1.0
 velocity_pivot = Vector3(0, 0.5, 0)
 direction = Vector3(0, 1, 0)
@@ -41,6 +36,7 @@ color_ramp = SubResource("GradientTexture1D_d12lu")
 turbulence_enabled = true
 turbulence_noise_scale = 0.5
 turbulence_noise_speed = Vector3(0, 1, 0)
+turbulence_influence_min = 0.25
 turbulence_influence_max = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u3a80"]
@@ -55,12 +51,39 @@ particles_anim_loop = false
 material = SubResource("StandardMaterial3D_u3a80")
 size = Vector2(0.025, 0.025)
 
+[sub_resource type="Gradient" id="Gradient_d12lu"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(1, 1, 0, 1, 1, 0.486275, 0, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_tpjl4"]
+gradient = SubResource("Gradient_d12lu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8kqrw"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.41
+emission_ring_radius = 0.3
+emission_ring_inner_radius = 0.25
+emission_ring_cone_angle = 0.0
+gravity = Vector3(0, 4.9, 0)
+color_ramp = SubResource("GradientTexture1D_tpjl4")
+
 [node name="Campfire" type="Node3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="CampFire" parent="." instance=ExtResource("1_u3a80")]
 
-[node name="Fire" type="GPUParticles3D" parent="."]
-amount = 4096
-lifetime = 1.25
+[node name="Ember" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.222754, 0)
+amount = 1024
+lifetime = 0.67
+fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_u3a80")
+draw_pass_1 = SubResource("QuadMesh_d12lu")
+
+[node name="Fire" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.294623, 0)
+amount = 4096
+lifetime = 0.1
+process_material = SubResource("ParticleProcessMaterial_8kqrw")
 draw_pass_1 = SubResource("QuadMesh_d12lu")
