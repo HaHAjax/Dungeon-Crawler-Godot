@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c78gsf20rqvn4"
-path.s3tc="res://.godot/imported/CampFire_Texturelabs_Stone_122S.png-af011cd5b23c476a6d2b1c23d976f0b0.s3tc.ctex"
+uid="uid://cnuor1manygjm"
+path.s3tc="res://.godot/imported/CampFire_1160-normal.jpg-661c45ac9d25b4ed067d103f0700677b.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "6eca5f4d19aecfd2d681a96b9be7b6b1"
+"md5": "55796255da5057b9e2dfa190e33ec91a"
 }
 
 [deps]
 
-source_file="res://Assets/Models/Decor/CampFire_Texturelabs_Stone_122S.png"
-dest_files=["res://.godot/imported/CampFire_Texturelabs_Stone_122S.png-af011cd5b23c476a6d2b1c23d976f0b0.s3tc.ctex"]
+source_file="res://Assets/Models/Decor/Campfire/CampFire_1160-normal.jpg"
+dest_files=["res://.godot/imported/CampFire_1160-normal.jpg-661c45ac9d25b4ed067d103f0700677b.s3tc.ctex"]
 
 [params]
 
@@ -23,12 +23,12 @@ compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
-roughness/src_normal=""
+roughness/mode=1
+roughness/src_normal="res://Assets/Models/CampFire_1160-normal.jpg"
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false

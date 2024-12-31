@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcrwy6mdwlkex"
-path.s3tc="res://.godot/imported/CampFire_log_texture.png-ab32ff77385ab3fe02648ab9acd6fb86.s3tc.ctex"
+uid="uid://c78gsf20rqvn4"
+path.s3tc="res://.godot/imported/CampFire_Texturelabs_Stone_122S.png-3aaaf4ec7b1514f9f345ac43ca76d41a.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "1d547cd7797598529667b458207c1c65"
+"md5": "6eca5f4d19aecfd2d681a96b9be7b6b1"
 }
 
 [deps]
 
-source_file="res://Assets/Models/Decor/CampFire_log_texture.png"
-dest_files=["res://.godot/imported/CampFire_log_texture.png-ab32ff77385ab3fe02648ab9acd6fb86.s3tc.ctex"]
+source_file="res://Assets/Models/Decor/Campfire/CampFire_Texturelabs_Stone_122S.png"
+dest_files=["res://.godot/imported/CampFire_Texturelabs_Stone_122S.png-3aaaf4ec7b1514f9f345ac43ca76d41a.s3tc.ctex"]
 
 [params]
 
